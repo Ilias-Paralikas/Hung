@@ -13,57 +13,102 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import org.json.JSONObject;
-import Exceptions.UndersizeException;
+
+import Exceptions.*;
 
 public class Dictionary {
 
+    static File medialab = new File("src/medialab");
+    static int ShortWordThreshold = 6;
+    static int LongWordThreshold = 9;
+    static int LongWordsPercentage = 20;
+    String ID;
+    String filename;
+    String url;
+    public ArrayList<String> words = new ArrayList<String>();
 
-    public static void main(String[] args) {
-        String ID = "OL45883W";
+    public Dictionary(String providedID) {
+        medialab.mkdir();
+        ID = providedID;
+        url = "https://openlibrary.org/works/" + ID + ".json";
+        filename = "src/medialab/hangman_DICTIONARY - " + ID + ".txt";
 
         try {
-            CreateDictionary(ID);
-            ArrayList<String> words = ReadDictionary(ID);
-            System.out.println(words);
+            medialab.mkdir();
+            if (new File(filename).createNewFile()) {
+                CreateDictionary();
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
-
     }
 
-    public static ArrayList<String> ReadDictionary(String ID) {
+    public void ReadDictionary() {
         try {
-            ArrayList<String> words = new ArrayList<String>();
-
-            try {
-                CreateDictionary(ID);
-            } catch (Exception e) {
-                System.out.println(e);
+            if (new File(filename).createNewFile()) {
+                CreateDictionary();
             }
-
-            Scanner reader = new Scanner(new FileReader("src/medialab/hangman_DICTIONARY - " + ID + ".txt"));
+            words.clear();
+            Scanner reader = new Scanner(new FileReader(filename));
             while (reader.hasNextLine()) {
                 String word = reader.nextLine();
                 words.add(word);
             }
             reader.close();
-            return words;
         } catch (Exception e) {
             System.out.println(e);
-            return null;
+        }
+        try {
+            ValidateDictionary();
+        } catch (Exception e) {
+            words.clear();
+            (new File(filename)).delete();
+            System.out.println(e);
+            System.out.println(
+                    "Dictionaries are generated automatically from the openLibrary API and tested before stored. \nPlease dont meddle with them manually. \nThe file will be deleted so you can rerun the program.");
         }
     }
 
-    public static void CreateDictionary(String ID) throws Exception {
-        String description = GetDescription(ID);
-        String[] parsed_description = description.split("\\s+");
-        HashSet<String> words = CorretDictionary(parsed_description);
-        FileManager(ID);
-        StoreHashSet(words, ID);
-
+    public void CreateDictionary() {
+        try {
+            String description = GetDescription();
+            String[] parsed_description = description.split("\\s+");
+            CorretDictionary(parsed_description);
+            StoreWords();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
-    private static String GetBook(String url) {
+    private void ValidateDictionary() throws Exception {
+        int long_counter = 0, short_counter = 0;
+        for (String word : words) {
+            int len = word.length();
+            if (len < ShortWordThreshold) {
+                throw new InvalidRangeException("Found word with less than "+ShortWordThreshold+" letters");
+            } else {
+                if (len >= LongWordThreshold) {
+                    long_counter++;
+                } else {
+                    short_counter++;
+                }
+            }
+        }
+        if (long_counter + short_counter < 20) {
+            throw new UndersizeException("Less than 20 words in Dict");
+        }
+
+        if (short_counter > (100/LongWordsPercentage -1) * long_counter) {
+            throw new UnbalancedException("Less than 20% of the words consist of nine or more letters");
+        }
+
+        HashSet<String> unique = new HashSet<String>(words);
+        if (words.size() != unique.size()) {
+            throw new InvalidCountExeception("Word duplicate found");
+        }
+    }
+
+    private String GetBook() {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
@@ -73,10 +118,9 @@ public class Dictionary {
         return book;
     }
 
-    private static String GetDescription(String ID) throws Exception {
+    private String GetDescription() throws Exception {
 
-        String url = "https://openlibrary.org/works/" + ID + ".json";
-        String book = GetBook(url);
+        String book = GetBook();
         try {
             JSONObject jsonBook = new JSONObject(book);
             return jsonBook.getString("description");
@@ -86,14 +130,14 @@ public class Dictionary {
         }
     }
 
-    private static HashSet<String> CorretDictionary(String[] parsed_description) throws UndersizeException {
+    private void CorretDictionary(String[] parsed_description) throws UndersizeException {
         HashSet<String> short_words = new HashSet<String>();
         HashSet<String> long_words = new HashSet<String>();
 
         for (String punctuated_word : parsed_description) {
             String word = punctuated_word.replaceAll("\\p{Punct}", "").toUpperCase();
-            if (word.length() >= 6) {
-                if (word.length() >= 9) {
+            if (word.length() >= ShortWordThreshold) {
+                if (word.length() >= LongWordThreshold) {
                     long_words.add(word);
                 } else {
                     short_words.add(word);
@@ -101,26 +145,29 @@ public class Dictionary {
             }
         }
 
-        Integer balance_counter = 0;
-        Integer short_size = 4 * long_words.size();
+        for (String word : long_words) {
+            words.add(word);
+        }
+
+        int balance_counter = 0;
+        int short_size = (100/LongWordsPercentage -1) * words.size();
 
         for (String short_word : short_words) {
             if (balance_counter >= short_size) {
                 break;
             }
-            long_words.add(short_word);
+            words.add(short_word);
             balance_counter++;
         }
 
-        if (long_words.size() < 20) {
-            throw new UndersizeException("small words count");
+        if (words.size() < 20) {
+            words.clear();
+            throw new UndersizeException(
+                    "The book you have chosen does not meet the criteria to be turned into a Disctionary, please select another one");
         }
-
-        return long_words;
     }
 
-    private static void StoreHashSet(HashSet<String> words, String ID) throws IOException {
-        String filename = FileManager(ID);
+    private void StoreWords() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         for (String word : words) {
             writer.write(word);
@@ -130,19 +177,4 @@ public class Dictionary {
 
     }
 
-    private static String FileManager(String ID) throws IOException {
-
-        File medialab = new File("src/medialab");
-        String filename = "src/medialab/hangman_DICTIONARY - " + ID + ".txt";
-        File file = new File(filename);
-
-        try {
-            medialab.mkdir();
-            file.createNewFile();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return filename;
-    }
 }
