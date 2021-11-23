@@ -69,7 +69,7 @@ public class Dictionary {
         }
     }
 
-    public void CreateDictionary() throws Exception {
+    public void CreateDictionary() {
         try {
             String description = GetDescription();
             String[] parsed_description = description.split("\\s+");
