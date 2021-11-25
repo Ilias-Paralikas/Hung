@@ -18,10 +18,10 @@ import Exceptions.*;
 
 public class Dictionary {
 
-    static File medialab = new File("src/medialab");
-    static int ShortWordThreshold = 6;
-    static int LongWordThreshold = 9;
-    static int LongWordsPercentage = 20;
+    private static final File medialab = new File("src/medialab");
+    private static final int SHORT_WORD_THRESHOLD = 6;
+    private static final int LONG_WORD_THRESHOLD = 9;
+    private static final int LONG_WORDS_PERCENTAGE = 20;
     String ID;
     String filename;
     String url;
@@ -47,6 +47,7 @@ public class Dictionary {
         try {
             if (new File(filename).createNewFile()) {
                 CreateDictionary();
+                return;
             }
             words.clear();
             Scanner reader = new Scanner(new FileReader(filename));
@@ -55,11 +56,12 @@ public class Dictionary {
                 words.add(word);
             }
             reader.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        try {
+
             ValidateDictionary();
+        } catch (IDNotMatch e) {
+            System.out.println("got ID not match");
+            System.out.println(e);
+            (new File(filename)).delete();
         } catch (Exception e) {
             words.clear();
             (new File(filename)).delete();
@@ -69,25 +71,27 @@ public class Dictionary {
         }
     }
 
-    public void CreateDictionary() {
+    private void CreateDictionary() throws Exception {
         try {
             String description = GetDescription();
             String[] parsed_description = description.split("\\s+");
             CorretDictionary(parsed_description);
             StoreWords();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error message" + e);
+            throw new IDNotMatch("Possible problems, wrong ID, API down, no internet connection");
         }
+
     }
 
     private void ValidateDictionary() throws Exception {
         int long_counter = 0, short_counter = 0;
         for (String word : words) {
             int len = word.length();
-            if (len < ShortWordThreshold) {
-                throw new InvalidRangeException("Found word with less than "+ShortWordThreshold+" letters");
+            if (len < SHORT_WORD_THRESHOLD) {
+                throw new InvalidRangeException("Found word with less than " + SHORT_WORD_THRESHOLD + " letters");
             } else {
-                if (len >= LongWordThreshold) {
+                if (len >= LONG_WORD_THRESHOLD) {
                     long_counter++;
                 } else {
                     short_counter++;
@@ -98,7 +102,7 @@ public class Dictionary {
             throw new UndersizeException("Less than 20 words in Dict");
         }
 
-        if (short_counter > (100/LongWordsPercentage -1) * long_counter) {
+        if (short_counter > (100 / LONG_WORDS_PERCENTAGE - 1) * long_counter) {
             throw new UnbalancedException("Less than 20% of the words consist of nine or more letters");
         }
 
@@ -121,13 +125,9 @@ public class Dictionary {
     private String GetDescription() throws Exception {
 
         String book = GetBook();
-        try {
-            JSONObject jsonBook = new JSONObject(book);
-            return jsonBook.getString("description");
+        JSONObject jsonBook = new JSONObject(book);
+        return jsonBook.getString("description");
 
-        } catch (Exception e) {
-            throw new Exception("The ID code you provided does not match a book");
-        }
     }
 
     private void CorretDictionary(String[] parsed_description) throws UndersizeException {
@@ -136,8 +136,8 @@ public class Dictionary {
 
         for (String punctuated_word : parsed_description) {
             String word = punctuated_word.replaceAll("\\p{Punct}", "").toUpperCase();
-            if (word.length() >= ShortWordThreshold) {
-                if (word.length() >= LongWordThreshold) {
+            if (word.length() >= SHORT_WORD_THRESHOLD) {
+                if (word.length() >= LONG_WORD_THRESHOLD) {
                     long_words.add(word);
                 } else {
                     short_words.add(word);
@@ -150,7 +150,7 @@ public class Dictionary {
         }
 
         int balance_counter = 0;
-        int short_size = (100/LongWordsPercentage -1) * words.size();
+        int short_size = (100 / LONG_WORDS_PERCENTAGE - 1) * words.size();
 
         for (String short_word : short_words) {
             if (balance_counter >= short_size) {
