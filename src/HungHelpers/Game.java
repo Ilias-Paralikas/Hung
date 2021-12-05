@@ -1,7 +1,7 @@
+package HungHelpers;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import HungHelpers.*;
 
 public class Game {
 
@@ -11,31 +11,43 @@ public class Game {
     private static final int lossPoints = 15;
     private static final double[] victoryPointsProbabilityThreshold = new double[] { 0.6, 0.4, 0.25, 0.0 };
     private char[] HiddenWord;
-    private ArrayList<char[]> possibleWords;
-    private int possibleWordsLength;
     private Boolean[] knownPossitions;
+    private ArrayList<char[]> possibleWords;
     private double[][] probabilities;
     private int points = 0;
     private int chancesRemaining = 6;
 
-    static public void main(String[] args) {
-        Game game = new Game("OL45883W");
-        System.out.println(game.HiddenWord);
-        game.Calculateprobabilities();
-        System.out.println(Arrays.deepToString(game.possibleWords.toArray()));
-        System.out.println(Arrays.toString(game.probabilities[0]));
-        System.out.println(game.points);
-        System.out.println("\n\n\n\n");
-        game.ChooseLetter((char) (game.HiddenWord[0] + 1), 0);
-        System.out.println(Arrays.deepToString(game.possibleWords.toArray()));
-        System.out.println(Arrays.deepToString(game.probabilities));
-        System.out.println(game.points);
+    class Gamestate {
+        public char[] Gamestate_HiddenWord;
+        public Boolean[] Gamestate_knownPossitions;
+        public ArrayList<char[]> Gamestate_PossibleWords;
+        public double[][] Gamestate_Probabilities;
+        public int Gamestate_Points;
+        public int Gamestate_ChancesRemaining;
+        public boolean Gamestate_result;
 
-        // game.Calculateprobabilities();
-        // System.out.println(Arrays.deepToString(game.possibleWords.toArray()));
-        // System.out.println(Arrays.toString(game.probabilities[0]));
+        public Gamestate(boolean result) {
+            this.Gamestate_HiddenWord = Game.this.HiddenWord;
+            this.Gamestate_knownPossitions = Game.this.knownPossitions;
+            this.Gamestate_PossibleWords = Game.this.possibleWords;
+            this.Gamestate_Probabilities = Game.this.probabilities;
+            this.Gamestate_Points = Game.this.points;
+            this.Gamestate_ChancesRemaining = Game.this.chancesRemaining;
+            this.Gamestate_result = result;
 
+        }
     }
+
+    // public static void main(String[] args) {
+    // Game game = new Game("OL45883W");
+    // System.out.println(game.HiddenWord);
+    // System.out.println(Arrays.deepToString(game.probabilities));
+    // Gamestate gamestate = game.ChooseLetter('A', 1);
+    // System.out.println(Arrays.deepToString(gamestate.Gamestate_Probabilities));
+
+    // System.out.println(gamestate.Gamestate_HiddenWord);
+
+    // }
 
     public Game(String ID) {
         Dictionary Dict = new Dictionary(ID);
@@ -49,8 +61,6 @@ public class Game {
                 this.possibleWords.add(word.toCharArray());
             }
         }
-        this.possibleWordsLength = possibleWords.size();
-
         this.knownPossitions = new Boolean[this.HiddenWord.length];
         Arrays.fill(this.knownPossitions, Boolean.FALSE);
 
@@ -62,22 +72,10 @@ public class Game {
             System.out.println("Victory points do no match their rewards");
         }
 
+        this.Calculateprobabilities();
     }
 
-    private void Calculateprobabilities() {
-        for (double[] row : this.probabilities)
-            Arrays.fill(row, 0);
-
-        for (int i = 0; i < this.HiddenWord.length; i++) {
-            if (!this.knownPossitions[i]) {
-                for (char[] word : this.possibleWords) {
-                    this.probabilities[i][word[i] - ASCII_BIAS] += 1.0 / this.possibleWordsLength;
-                }
-            }
-        }
-    }
-
-    private boolean ChooseLetter(char choice, int possition) {
+    public boolean ChooseLetter(char choice, int possition) {
         boolean result = (choice == this.HiddenWord[possition]);
         if (result) {
             for (int i = 0; i < victoryPointsProbabilityThreshold.length; i++) {
@@ -98,10 +96,22 @@ public class Game {
             }
         }
 
-        this.possibleWordsLength = this.possibleWords.size();
         // xazh lysh
         this.Calculateprobabilities();
         return result;
+    }
+
+    private void Calculateprobabilities() {
+        for (double[] row : this.probabilities)
+            Arrays.fill(row, 0);
+
+        for (int i = 0; i < this.HiddenWord.length; i++) {
+            if (!this.knownPossitions[i]) {
+                for (char[] word : this.possibleWords) {
+                    this.probabilities[i][word[i] - ASCII_BIAS] += 1.0 / this.possibleWords.size();
+                }
+            }
+        }
     }
 
 }
