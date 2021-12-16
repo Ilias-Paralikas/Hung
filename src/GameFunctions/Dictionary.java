@@ -1,4 +1,4 @@
-package HungHelpers;
+package GameFunctions;
 
 import java.io.BufferedWriter;
 import java.io.File;

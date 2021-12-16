@@ -1,4 +1,4 @@
-package HungHelpers;
+package GameFunctions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,27 +16,6 @@ public class Game {
     private double[][] probabilities;
     private int points = 0;
     private int chancesRemaining = 6;
-
-    class Gamestate {
-        public char[] Gamestate_HiddenWord;
-        public Boolean[] Gamestate_knownPossitions;
-        public ArrayList<char[]> Gamestate_PossibleWords;
-        public double[][] Gamestate_Probabilities;
-        public int Gamestate_Points;
-        public int Gamestate_ChancesRemaining;
-        public boolean Gamestate_result;
-
-        public Gamestate(boolean result) {
-            this.Gamestate_HiddenWord = Game.this.HiddenWord;
-            this.Gamestate_knownPossitions = Game.this.knownPossitions;
-            this.Gamestate_PossibleWords = Game.this.possibleWords;
-            this.Gamestate_Probabilities = Game.this.probabilities;
-            this.Gamestate_Points = Game.this.points;
-            this.Gamestate_ChancesRemaining = Game.this.chancesRemaining;
-            this.Gamestate_result = result;
-
-        }
-    }
 
     // public static void main(String[] args) {
     // Game game = new Game("OL45883W");
@@ -89,7 +68,9 @@ public class Game {
             this.knownPossitions[possition] = true;
         } else {
             this.possibleWords.removeIf(word -> (word[possition] == choice));
-            this.points -= lossPoints;
+            if(this.points >lossPoints) {
+                this.points -= lossPoints;
+            };
             this.chancesRemaining -= 1;
             if (this.chancesRemaining == 0) {
                 System.out.println("You lost!");

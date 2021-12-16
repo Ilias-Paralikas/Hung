@@ -1,0 +1,12 @@
+.root {
+  -fx-background-image: url("HangBackground.png");
+  -fx-background-size: cover;
+
+}
+
+
+#info{
+  -fx-font-size: 100;
+  -fx-background-color: red;
+}
+
