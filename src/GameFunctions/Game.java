@@ -7,47 +7,48 @@ public class Game {
 
     private static final int POSSIBLE_LETTERS = 26;
     private static final int ASCII_BIAS = 65;
-    private static final int[] victoryPoints = new int[] { 5, 10, 15, 30 };
-    private static final int lossPoints = 15;
-    private static final double[] victoryPointsProbabilityThreshold = new double[] { 0.6, 0.4, 0.25, 0.0 };
-    private char[] HiddenWord;
-    private Boolean[] knownPossitions;
-    private ArrayList<char[]> possibleWords;
-    private double[][] probabilities;
-    private int points = 0;
-    private int chancesRemaining = 6;
+    private static final int[] VICTORY_POINTS = new int[] { 5, 10, 15, 30 };
+    private static final int LOSS_POINTS = 15;
+    private static final double[] VICTORT_POINTS_PROBABILITY_THRESHOLD = new double[] { 0.6, 0.4, 0.25, 0.0 };
+    private static final int INITIAL_CHANCES = 6;
 
-    // public static void main(String[] args) {
-    // Game game = new Game("OL45883W");
-    // System.out.println(game.HiddenWord);
-    // System.out.println(Arrays.deepToString(game.probabilities));
-    // Gamestate gamestate = game.ChooseLetter('A', 1);
-    // System.out.println(Arrays.deepToString(gamestate.Gamestate_Probabilities));
+    public char[] hiddenWord;
+    public Boolean[] knownPossitions;
+    public ArrayList<char[]> possibleWords;
+    public double[][] probabilities;
+    public int points = 0;
+    public int chancesRemaining = INITIAL_CHANCES;
+    public int correctAnswers = 0;
 
-    // System.out.println(gamestate.Gamestate_HiddenWord);
 
-    // }
+    public double getcorrectAnswersPercentage() {
+        if (this.correctAnswers == 0)
+            return 100;
+        else
+            return this.correctAnswers / (this.correctAnswers + this.chancesRemaining - INITIAL_CHANCES);
+    }
+
 
     public Game(String ID) {
         Dictionary Dict = new Dictionary(ID);
         Dict.ReadDictionary();
 
-        this.HiddenWord = Dict.words.get((int) Math.round(Math.random() * Dict.words.size())).toCharArray();
+        this.hiddenWord = Dict.words.get((int) Math.round(Math.random() * Dict.words.size())).toCharArray();
 
         this.possibleWords = new ArrayList<char[]>();
         for (String word : Dict.words) {
-            if (word.length() == this.HiddenWord.length) {
+            if (word.length() == this.hiddenWord.length) {
                 this.possibleWords.add(word.toCharArray());
             }
         }
-        this.knownPossitions = new Boolean[this.HiddenWord.length];
+        this.knownPossitions = new Boolean[this.hiddenWord.length];
         Arrays.fill(this.knownPossitions, Boolean.FALSE);
 
-        this.probabilities = new double[this.HiddenWord.length][POSSIBLE_LETTERS];
+        this.probabilities = new double[this.hiddenWord.length][POSSIBLE_LETTERS];
         for (double[] row : this.probabilities)
             Arrays.fill(row, 0);
 
-        if (victoryPoints.length != victoryPointsProbabilityThreshold.length) {
+        if (VICTORY_POINTS.length != VICTORT_POINTS_PROBABILITY_THRESHOLD.length) {
             System.out.println("Victory points do no match their rewards");
         }
 
@@ -55,11 +56,15 @@ public class Game {
     }
 
     public boolean ChooseLetter(char choice, int possition) {
-        boolean result = (choice == this.HiddenWord[possition]);
+        boolean result = (choice == this.hiddenWord[possition]);
         if (result) {
-            for (int i = 0; i < victoryPointsProbabilityThreshold.length; i++) {
-                if (this.probabilities[possition][choice - ASCII_BIAS] > victoryPointsProbabilityThreshold[i]) {
-                    this.points += victoryPoints[i];
+            correctAnswers += 1;
+            if (correctAnswers == hiddenWord.length) {
+                System.out.println("YOU WON!");
+            }
+            for (int i = 0; i < VICTORT_POINTS_PROBABILITY_THRESHOLD.length; i++) {
+                if (this.probabilities[possition][choice - ASCII_BIAS] > VICTORT_POINTS_PROBABILITY_THRESHOLD[i]) {
+                    this.points += VICTORY_POINTS[i];
                     break;
                 }
             }
@@ -68,9 +73,11 @@ public class Game {
             this.knownPossitions[possition] = true;
         } else {
             this.possibleWords.removeIf(word -> (word[possition] == choice));
-            if(this.points >lossPoints) {
-                this.points -= lossPoints;
-            };
+            if (this.points > LOSS_POINTS) {
+                this.points -= LOSS_POINTS;
+            } else {
+                this.points = 0;
+            }
             this.chancesRemaining -= 1;
             if (this.chancesRemaining == 0) {
                 System.out.println("You lost!");
@@ -86,7 +93,7 @@ public class Game {
         for (double[] row : this.probabilities)
             Arrays.fill(row, 0);
 
-        for (int i = 0; i < this.HiddenWord.length; i++) {
+        for (int i = 0; i < this.hiddenWord.length; i++) {
             if (!this.knownPossitions[i]) {
                 for (char[] word : this.possibleWords) {
                     this.probabilities[i][word[i] - ASCII_BIAS] += 1.0 / this.possibleWords.size();

@@ -29,13 +29,13 @@ public class Dictionary {
 
     public Dictionary(String providedID) {
         medialab.mkdir();
-        ID = providedID;
-        url = "https://openlibrary.org/works/" + ID + ".json";
-        filename = "src/medialab/hangman_DICTIONARY - " + ID + ".txt";
+        this.ID = providedID;
+        this.url = "https://openlibrary.org/works/" + this.ID + ".json";
+        this.filename = "src/medialab/hangman_DICTIONARY - " + this.ID + ".txt";
 
         try {
             medialab.mkdir();
-            if (new File(filename).createNewFile()) {
+            if (new File(this.filename).createNewFile()) {
                 CreateDictionary();
             }
         } catch (Exception e) {
@@ -45,12 +45,12 @@ public class Dictionary {
 
     public void ReadDictionary() {
         try {
-            if (new File(filename).createNewFile()) {
+            if (new File(this.filename).createNewFile()) {
                 CreateDictionary();
                 return;
             }
             words.clear();
-            Scanner reader = new Scanner(new FileReader(filename));
+            Scanner reader = new Scanner(new FileReader(this.filename));
             while (reader.hasNextLine()) {
                 String word = reader.nextLine();
                 words.add(word);
@@ -61,10 +61,10 @@ public class Dictionary {
         } catch (IDNotMatch e) {
             System.out.println("got ID not match");
             System.out.println(e);
-            (new File(filename)).delete();
+            (new File(this.filename)).delete();
         } catch (Exception e) {
             words.clear();
-            (new File(filename)).delete();
+            (new File(this.filename)).delete();
             System.out.println(e);
             System.out.println(
                     "Dictionaries are generated automatically from the openLibrary API and tested before stored. \nPlease dont meddle with them manually. \nThe file will be deleted so you can rerun the program.");
@@ -168,7 +168,7 @@ public class Dictionary {
     }
 
     private void StoreWords() throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(this.filename));
         for (String word : words) {
             writer.write(word);
             writer.write("\n");

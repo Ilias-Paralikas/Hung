@@ -1,12 +1,17 @@
-.root {
+/* .root {
   -fx-background-image: url("HangBackground.png");
   -fx-background-size: cover;
+  background-image: url("HangBackground.png");
+  background-size: cover;
 
+} */
+
+.label {
+  -fx-font-size: 40;
+  font-size: 40;
 }
 
-
-#info{
+#Gaps{
   -fx-font-size: 100;
-  -fx-background-color: red;
+  font-size: 100;
 }
-
