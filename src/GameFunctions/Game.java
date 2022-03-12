@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Game {
 
     private static final int POSSIBLE_LETTERS = 26;
-    private static final int ASCII_BIAS = 65;
+    private static final int ASCII_OFFSET = 65;
     private static final int[] VICTORY_POINTS = new int[] { 5, 10, 15, 30 };
     private static final int LOSS_POINTS = 15;
     private static final double[] VICTORT_POINTS_PROBABILITY_THRESHOLD = new double[] { 0.6, 0.4, 0.25, 0.0 };
@@ -63,7 +63,7 @@ public class Game {
                 System.out.println("YOU WON!");
             }
             for (int i = 0; i < VICTORT_POINTS_PROBABILITY_THRESHOLD.length; i++) {
-                if (this.probabilities[possition][choice - ASCII_BIAS] > VICTORT_POINTS_PROBABILITY_THRESHOLD[i]) {
+                if (this.probabilities[possition][choice - ASCII_OFFSET] > VICTORT_POINTS_PROBABILITY_THRESHOLD[i]) {
                     this.points += VICTORY_POINTS[i];
                     break;
                 }
@@ -96,7 +96,7 @@ public class Game {
         for (int i = 0; i < this.hiddenWord.length; i++) {
             if (!this.knownPossitions[i]) {
                 for (char[] word : this.possibleWords) {
-                    this.probabilities[i][word[i] - ASCII_BIAS] += 1.0 / this.possibleWords.size();
+                    this.probabilities[i][word[i] - ASCII_OFFSET] += 1.0 / this.possibleWords.size();
                 }
             }
         }

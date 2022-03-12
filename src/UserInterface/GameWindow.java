@@ -1,11 +1,10 @@
 package UserInterface;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import GameFunctions.Game;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -18,12 +17,14 @@ import javafx.stage.Stage;
 
 public class GameWindow extends Application {
 
+   
+
     private static final String VISUAL_RESCOURCES_FILE_NAME = "VisualRescources";
     private static final String CSS_FILE_NAME = VISUAL_RESCOURCES_FILE_NAME + "/style.css";
     private static final String DRAWINGS_FILE_NAME = VISUAL_RESCOURCES_FILE_NAME + "/hung_drawings";
     private static final int STAGE_WIDTH = 1800;
     private static final int STAGE_HEIGHT = 900;
-    private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    //private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     int imageNumber = 1;
     char[] hiddenWordVisual;
 
@@ -79,35 +80,130 @@ public class GameWindow extends Application {
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         //4b
-        TableView<Double> table = new TableView<Double>();
-        TableColumn A = new TableColumn("A");
-        TableColumn B = new TableColumn("B");
-        TableColumn C = new TableColumn("C");
 
-        final ObservableList<Probabilities> data = FXCollections.observableArrayList(
-        new Probabilities(0.3,0.2,1.3),
-        new Probabilities(0.3,0.2,1.3),
-        new Probabilities(0.3,0.2,1.4)
-        );
+        TableView<Probabilities>  table = new TableView<Probabilities>();
+
+        TableColumn<Probabilities,Double> A = new TableColumn<Probabilities,Double>("A");
+        TableColumn<Probabilities,Double> B = new TableColumn<Probabilities,Double>("B");
+        TableColumn<Probabilities,Double> C = new TableColumn<Probabilities,Double>("C");
+        TableColumn<Probabilities,Double> D = new TableColumn<Probabilities,Double>("D");
+        TableColumn<Probabilities,Double> E = new TableColumn<Probabilities,Double>("E");
+        TableColumn<Probabilities,Double> F = new TableColumn<Probabilities,Double>("F");
+        TableColumn<Probabilities,Double> G = new TableColumn<Probabilities,Double>("G");
+        TableColumn<Probabilities,Double> H = new TableColumn<Probabilities,Double>("H");
+        TableColumn<Probabilities,Double> I = new TableColumn<Probabilities,Double>("I");
+        TableColumn<Probabilities,Double> J = new TableColumn<Probabilities,Double>("J");
+        TableColumn<Probabilities,Double> K = new TableColumn<Probabilities,Double>("K");
+        TableColumn<Probabilities,Double> L = new TableColumn<Probabilities,Double>("L");
+        TableColumn<Probabilities,Double> M = new TableColumn<Probabilities,Double>("M");
+        TableColumn<Probabilities,Double> N = new TableColumn<Probabilities,Double>("N");
+        TableColumn<Probabilities,Double> O = new TableColumn<Probabilities,Double>("O");
+        TableColumn<Probabilities,Double> P = new TableColumn<Probabilities,Double>("P");
+        TableColumn<Probabilities,Double> Q = new TableColumn<Probabilities,Double>("Q");
+        TableColumn<Probabilities,Double> R = new TableColumn<Probabilities,Double>("R");
+        TableColumn<Probabilities,Double> S = new TableColumn<Probabilities,Double>("S");
+        TableColumn<Probabilities,Double> T = new TableColumn<Probabilities,Double>("T");
+        TableColumn<Probabilities,Double> U = new TableColumn<Probabilities,Double>("U");
+        TableColumn<Probabilities,Double> V = new TableColumn<Probabilities,Double>("V");
+        TableColumn<Probabilities,Double> W = new TableColumn<Probabilities,Double>("W");
+        TableColumn<Probabilities,Double> X = new TableColumn<Probabilities,Double>("X");
+        TableColumn<Probabilities,Double> Y = new TableColumn<Probabilities,Double>("Y");
+        TableColumn<Probabilities,Double> Z = new TableColumn<Probabilities,Double>("Z");
+        
+        table.getColumns().addAll(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y);
+        table.setPrefSize( 1000, 300 );
+
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
 
         A.setCellValueFactory(
-    new PropertyValueFactory<Probabilities,Double>("A")
-);
-B.setCellValueFactory(
-    new PropertyValueFactory<Probabilities,Double>("B")
-);
-C.setCellValueFactory(
-    new PropertyValueFactory<Probabilities,Double>("C")
-);
+            new PropertyValueFactory<Probabilities,Double>("A")
+        );
+        B.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("B")
+        );
+        C.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("C")
+        );
+        D.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("D")
+        );
+        E.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("E")
+        );
+        F.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("F")
+        );
+        G.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("G")
+        );
+        H.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("H")
+        );
+        I.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("I")
+        );
+        J.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("J")
+        );
+        K.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("K")
+        );
+        L.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("L")
+        );
+        M.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("M")
+        );
+        N.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("N")
+        );
+        O.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("O")
+        );        
+        P.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("P")
+        );        
+        Q.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("Q")
+        );
+        R.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("R")
+        );
+        S.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("S")
+        );
+        T.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("T")
+        );
+        U.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("U")
+        );
+        V.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("V")
+        );
+        W.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("W")
+        );
+        X.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("X")
+        );
+        Y.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("Y")
+        );
+        Z.setCellValueFactory(
+            new PropertyValueFactory<Probabilities,Double>("Z")
+        );
 
-table.setItems(data);
+        ArrayList<Double> test = new ArrayList<Double> (Arrays.asList(0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.1,0.1)); 
 
-        table.getColumns().addAll(A, B, C);
-
-        System.out.println(Arrays.deepToString(currentGame.probabilities));
-
+        table.getItems().add(new Probabilities(test   ));
 
         GridPane.setConstraints(table, 1, 3);
+
+
+       // System.out.println(my.probs.size());
+
 
 
 
