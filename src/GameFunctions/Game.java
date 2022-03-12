@@ -22,10 +22,10 @@ public class Game {
 
 
     public double getcorrectAnswersPercentage() {
-        if (this.correctAnswers == 0)
+        if (this.correctAnswers == 0  &&  chancesRemaining == INITIAL_CHANCES)
             return 100;
         else
-            return this.correctAnswers / (this.correctAnswers + this.chancesRemaining - INITIAL_CHANCES);
+            return this.correctAnswers / (this.correctAnswers + this.chancesRemaining - INITIAL_CHANCES) *100;
     }
 
 
@@ -73,12 +73,14 @@ public class Game {
             this.knownPossitions[possition] = true;
         } else {
             this.possibleWords.removeIf(word -> (word[possition] == choice));
+
             if (this.points > LOSS_POINTS) {
                 this.points -= LOSS_POINTS;
             } else {
                 this.points = 0;
             }
             this.chancesRemaining -= 1;
+
             if (this.chancesRemaining == 0) {
                 System.out.println("You lost!");
             }

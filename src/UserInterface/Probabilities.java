@@ -5,33 +5,33 @@ import java.util.ArrayList;
 public class Probabilities {
     private double A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
 
-    Probabilities(ArrayList<Double> probs) {
-        this.A = probs.get(0);
-        this.B = probs.get(1);
-        this.C = probs.get(2);
-        this.D = probs.get(3);
-        this.F = probs.get(4);
-        this.G = probs.get(5);
-        this.H = probs.get(6);
-        this.I = probs.get(7);
-        this.J = probs.get(8);
-        this.K = probs.get(9);
-        this.L = probs.get(10);
-        this.M = probs.get(11);
-        this.N = probs.get(12);
-        this.O = probs.get(13);
-        this.P = probs.get(14);
-        this.Q = probs.get(15);
-        this.R = probs.get(16);
-        this.S = probs.get(17);
-        this.T = probs.get(18);
-        this.U = probs.get(19);
-        this.V = probs.get(20);
-        this.W = probs.get(21);
-        this.X = probs.get(22);
-        this.Y = probs.get(23);
-        this.X = probs.get(24);
-        this.Z = probs.get(25);
+    Probabilities(double[] probs) {
+        this.A = probs[0];
+        this.B = probs[1];
+        this.C = probs[2];
+        this.D = probs[3];
+        this.F = probs[4];
+        this.G = probs[5];
+        this.H = probs[6];
+        this.I = probs[7];
+        this.J = probs[8];
+        this.K = probs[9];
+        this.L = probs[10];
+        this.M = probs[11];
+        this.N = probs[12];
+        this.O = probs[13];
+        this.P = probs[14];
+        this.Q = probs[15];
+        this.R = probs[16];
+        this.S = probs[17];
+        this.T = probs[18];
+        this.U = probs[19];
+        this.V = probs[20];
+        this.W = probs[21];
+        this.X = probs[22];
+        this.Y = probs[23];
+        this.X = probs[24];
+        this.Z = probs[25];
 
     }
 

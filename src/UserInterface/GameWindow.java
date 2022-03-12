@@ -5,8 +5,12 @@ import java.util.Arrays;
 
 import GameFunctions.Game;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,7 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class GameWindow extends Application {
+public class GameWindow extends Application implements EventHandler<ActionEvent> {
 
    
 
@@ -24,9 +28,11 @@ public class GameWindow extends Application {
     private static final String DRAWINGS_FILE_NAME = VISUAL_RESCOURCES_FILE_NAME + "/hung_drawings";
     private static final int STAGE_WIDTH = 1800;
     private static final int STAGE_HEIGHT = 900;
-    //private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+    private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     int imageNumber = 1;
     char[] hiddenWordVisual;
+    Game currentGame = new Game("OL45883W");
+
 
     public static void main(String[] args) {
         launch(args);
@@ -42,7 +48,8 @@ public class GameWindow extends Application {
         grid.setVgap(15);
         grid.setHgap(10);
 
-        Game currentGame = new Game("OL45883W");
+        //currentGame.ChooseLetter(currentGame.hiddenWord[0],0);
+ 
         ////////////////////////////////// 3 TOP PART//////////////////////////////////
         // show avaliable words
         Label possibleWordsLength = new Label(
@@ -65,7 +72,6 @@ public class GameWindow extends Application {
 
         this.hiddenWordVisual = new char[2 * currentGame.hiddenWord.length];
 
-
         for (int i = 0; i < currentGame.hiddenWord.length; i++) {
             if (currentGame.knownPossitions[i])
                 this.hiddenWordVisual[2 * i] = currentGame.hiddenWord[i];
@@ -76,6 +82,7 @@ public class GameWindow extends Application {
 
         Label gapsLabel = new Label(String.valueOf(this.hiddenWordVisual));
         gapsLabel.setId("Gaps");
+        gapsLabel.setMinWidth(90 * currentGame.hiddenWord.length);
         GridPane.setConstraints(gapsLabel, 0, 4);
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -84,34 +91,59 @@ public class GameWindow extends Application {
         TableView<Probabilities>  table = new TableView<Probabilities>();
 
         TableColumn<Probabilities,Double> A = new TableColumn<Probabilities,Double>("A");
+        A.setSortable(false);
         TableColumn<Probabilities,Double> B = new TableColumn<Probabilities,Double>("B");
+        B.setSortable(false);
         TableColumn<Probabilities,Double> C = new TableColumn<Probabilities,Double>("C");
+        C.setSortable(false);
         TableColumn<Probabilities,Double> D = new TableColumn<Probabilities,Double>("D");
+        D.setSortable(false);
         TableColumn<Probabilities,Double> E = new TableColumn<Probabilities,Double>("E");
+        E.setSortable(false);
         TableColumn<Probabilities,Double> F = new TableColumn<Probabilities,Double>("F");
+        F.setSortable(false);
         TableColumn<Probabilities,Double> G = new TableColumn<Probabilities,Double>("G");
+        G.setSortable(false);
         TableColumn<Probabilities,Double> H = new TableColumn<Probabilities,Double>("H");
+        H.setSortable(false);
         TableColumn<Probabilities,Double> I = new TableColumn<Probabilities,Double>("I");
+        I.setSortable(false);
         TableColumn<Probabilities,Double> J = new TableColumn<Probabilities,Double>("J");
+        J.setSortable(false);
         TableColumn<Probabilities,Double> K = new TableColumn<Probabilities,Double>("K");
+        K.setSortable(false);
         TableColumn<Probabilities,Double> L = new TableColumn<Probabilities,Double>("L");
+        L.setSortable(false);
         TableColumn<Probabilities,Double> M = new TableColumn<Probabilities,Double>("M");
+        M.setSortable(false);
         TableColumn<Probabilities,Double> N = new TableColumn<Probabilities,Double>("N");
+        N.setSortable(false);
         TableColumn<Probabilities,Double> O = new TableColumn<Probabilities,Double>("O");
+        O.setSortable(false);
         TableColumn<Probabilities,Double> P = new TableColumn<Probabilities,Double>("P");
+        P.setSortable(false);
         TableColumn<Probabilities,Double> Q = new TableColumn<Probabilities,Double>("Q");
+        Q.setSortable(false);
         TableColumn<Probabilities,Double> R = new TableColumn<Probabilities,Double>("R");
+        R.setSortable(false);
         TableColumn<Probabilities,Double> S = new TableColumn<Probabilities,Double>("S");
+        S.setSortable(false);
         TableColumn<Probabilities,Double> T = new TableColumn<Probabilities,Double>("T");
+        T.setSortable(false);
         TableColumn<Probabilities,Double> U = new TableColumn<Probabilities,Double>("U");
+        U.setSortable(false);
         TableColumn<Probabilities,Double> V = new TableColumn<Probabilities,Double>("V");
+        V.setSortable(false);
         TableColumn<Probabilities,Double> W = new TableColumn<Probabilities,Double>("W");
+        W.setSortable(false);
         TableColumn<Probabilities,Double> X = new TableColumn<Probabilities,Double>("X");
+        X.setSortable(false);
         TableColumn<Probabilities,Double> Y = new TableColumn<Probabilities,Double>("Y");
+        Y.setSortable(false);
         TableColumn<Probabilities,Double> Z = new TableColumn<Probabilities,Double>("Z");
+        Z.setSortable(false);
         
         table.getColumns().addAll(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y);
-        table.setPrefSize( 1000, 300 );
 
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -195,14 +227,12 @@ public class GameWindow extends Application {
             new PropertyValueFactory<Probabilities,Double>("Z")
         );
 
-        ArrayList<Double> test = new ArrayList<Double> (Arrays.asList(0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.3,0.2,0.1,0.1,0.1)); 
-
-        table.getItems().add(new Probabilities(test   ));
+        for (double[] prob : currentGame.probabilities) {
+            table.getItems().add(new Probabilities(prob));
+        }
 
         GridPane.setConstraints(table, 1, 3);
 
-
-       // System.out.println(my.probs.size());
 
 
 
@@ -210,7 +240,38 @@ public class GameWindow extends Application {
 
         ///////////////////////////////////////////////////////////////////////////////////////////
 
-        grid.getChildren().addAll(possibleWordsLength, pointsLabel, correctAnswersPercentage, gapsLabel, imageView,table);
+        Label PositionSelectorLabel = new Label("PositionSelector");
+        ChoiceBox<Integer> PositionSelector = new ChoiceBox<Integer>(); 
+        for (int i = 0; i < currentGame.hiddenWord.length; i++) {
+            if(!currentGame.knownPossitions[i])
+            PositionSelector.getItems().add(i);
+        }
+
+        GridPane.setConstraints(PositionSelectorLabel, 0, 5);
+        GridPane.setConstraints(PositionSelector, 0, 6);
+
+
+
+        Label LetterSelectorLabel = new Label("LetterSelector");
+        ChoiceBox<Character> LetterSelector = new ChoiceBox<Character>(); 
+        for (char letter : ALPHABET) {
+            LetterSelector.getItems().add(letter);
+        }
+    
+        GridPane.setConstraints(LetterSelectorLabel, 1, 5);
+
+        GridPane.setConstraints(LetterSelector, 1, 6);
+        ////////////////////////////////////////////
+
+
+        Button button = new Button("Click Me");
+        button.setOnAction(this);
+
+        GridPane.setConstraints(button, 0, 7);
+
+        
+
+        grid.getChildren().addAll(possibleWordsLength, pointsLabel, correctAnswersPercentage, gapsLabel, imageView,table,PositionSelector,PositionSelectorLabel,LetterSelector,LetterSelectorLabel,button);
 
         Scene scene = new Scene(grid, STAGE_WIDTH, STAGE_HEIGHT);
 
@@ -219,5 +280,17 @@ public class GameWindow extends Application {
         primaryStage.show();
 
     }
+
+
+
+    @Override
+    public void handle(ActionEvent event) {
+
+       if (!currentGame.ChooseLetter(currentGame.hiddenWord[1],0)){
+            this.imageNumber += 1;
+        }
+
+    }
+
 
 }
