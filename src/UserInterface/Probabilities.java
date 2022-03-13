@@ -1,6 +1,5 @@
 package UserInterface;
 
-import java.util.ArrayList;
 
 public class Probabilities {
     private double A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z;
@@ -10,27 +9,27 @@ public class Probabilities {
         this.B = probs[1];
         this.C = probs[2];
         this.D = probs[3];
-        this.F = probs[4];
-        this.G = probs[5];
-        this.H = probs[6];
-        this.I = probs[7];
-        this.J = probs[8];
-        this.K = probs[9];
-        this.L = probs[10];
-        this.M = probs[11];
-        this.N = probs[12];
-        this.O = probs[13];
-        this.P = probs[14];
-        this.Q = probs[15];
-        this.R = probs[16];
-        this.S = probs[17];
-        this.T = probs[18];
-        this.U = probs[19];
-        this.V = probs[20];
-        this.W = probs[21];
-        this.X = probs[22];
-        this.Y = probs[23];
-        this.X = probs[24];
+        this.E = probs[4];
+        this.F = probs[5];
+        this.G = probs[6];
+        this.H = probs[7];
+        this.I = probs[8];
+        this.J = probs[9];
+        this.K = probs[10];
+        this.L = probs[11];
+        this.M = probs[12];
+        this.N = probs[13];
+        this.O = probs[14];
+        this.P = probs[15];
+        this.Q = probs[16];
+        this.R = probs[17];
+        this.S = probs[18];
+        this.T = probs[19];
+        this.U = probs[20];
+        this.V = probs[21];
+        this.W = probs[22];
+        this.X = probs[23];
+        this.Y = probs[24];
         this.Z = probs[25];
 
     }
