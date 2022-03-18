@@ -25,7 +25,7 @@ public class Game {
         if (this.correctAnswers == 0  &&  chancesRemaining == INITIAL_CHANCES)
             return 100;
         else
-            return this.correctAnswers / (this.correctAnswers + this.chancesRemaining - INITIAL_CHANCES) *100;
+            return (this.correctAnswers / (this.correctAnswers +  INITIAL_CHANCES - this.chancesRemaining)) *100;
     }
 
 

@@ -1,12 +1,8 @@
 package UserInterface;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-
 import GameFunctions.Game;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,9 +10,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class GameWindow extends Application {
@@ -27,214 +25,90 @@ public class GameWindow extends Application {
     private static final int STAGE_WIDTH = 1800;
     private static final int STAGE_HEIGHT = 900;
     private static final char[] ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-    int imageNumber = 1;
-    char[] hiddenWordVisual;
-    Game currentGame = new Game("OL45883W");
-    Stage primaryStage;
+    private int imageNumber = 1;
+    private char[] hiddenWordVisual;
+    private Game currentGame;
+    private Stage primaryStage;
+    private Label possibleWordsLength = new Label();
+    private Label pointsLabel = new Label();
+    private Label correctAnswersPercentage = new Label();
+    private Label gapsLabel = new Label();
+    private Label PositionSelectorLabel = new Label("PositionSelector");
+    private Label LetterSelectorLabel = new Label("LetterSelector");
+    private Button SelectionButton = new Button("Select");
+    private TableView<Probabilities> table = new TableView<Probabilities>();
+
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public void Select(ChoiceBox<Character> LetterSelector, ChoiceBox<Integer> PositionSelector) {
-        Character letter = LetterSelector.getValue();
-        Integer position = PositionSelector.getValue();
-        if (!currentGame.ChooseLetter(letter, position)) {
-            this.imageNumber += 1;
-        }
+    @Override
+    public void start(Stage stage) {
 
+// //Creating a GridPane container
+// GridPane grid = new GridPane();
+// grid.setPadding(new Insets(10, 10, 10, 10));
+// grid.setVgap(5);
+// grid.setHgap(5);
+// //Defining the Name text field
+// Label choiceLabel = new Label("Chose the ID of the book you want to play with");
+// GridPane.setConstraints(choiceLabel, 0, 0);
+
+// final TextField bookId = new TextField();
+// bookId.setPromptText("Enter the id of the book you want to play with");
+// bookId.setPrefColumnCount(30);
+// bookId.getText();
+// GridPane.setConstraints(bookId, 0, 1);
+// Button choiceBook = new Button("Play");
+// choiceBook.setOnAction(e -> playWithBook(bookId.getText()));
+// GridPane.setConstraints(choiceBook, 0, 2);
+
+// grid.getChildren().addAll(bookId,choiceLabel,choiceBook);
+
+currentGame = new Game("OL45883W");
+
+
+
+
+        this.primaryStage = stage;
+        this.primaryStage.setTitle("MediaLab Hangman");
+        this.hiddenWordVisual = new char[2 * currentGame.hiddenWord.length];
         try {
             frame();
-            System.out.println("selection");
-            for (char[] word : currentGame.possibleWords) {
-                System.out.println(String.valueOf(word));
-            }
-
-            System.out.println(Arrays.deepToString(currentGame.probabilities));
         } catch (Exception e) {
             System.out.println(e);
         }
+        // Scene scene = new Scene(grid, STAGE_WIDTH, STAGE_HEIGHT);
 
+        // primaryStage.setScene(scene);
+        // primaryStage.show();
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        System.out.println(currentGame.hiddenWord);
+    // private void playWithBook(String bookId){
 
-        frame();
-    }
+    // }
 
-    public void frame() throws Exception {
-        // 1
-        primaryStage.setTitle("MediaLab Hangman");
-        // 2
+
+    private void frame() throws Exception {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(5, 5, 5, 5));
         grid.setVgap(15);
         grid.setHgap(10);
+        System.out.println(currentGame.hiddenWord);
+        UpdateStatistics();
 
-        // currentGame.ChooseLetter(currentGame.hiddenWord[0],0);
 
-        ////////////////////////////////// 3 TOP PART//////////////////////////////////
-        // show avaliable words
-        Label possibleWordsLength = new Label(
-                "Possible Words: " + String.valueOf(currentGame.possibleWords.size()));
-        GridPane.setConstraints(possibleWordsLength, 0, 0);
-        // show points
-        Label pointsLabel = new Label("Points: " + String.valueOf(currentGame.points));
-        GridPane.setConstraints(pointsLabel, 0, 1);
-        // show % of correct answrs
-        Label correctAnswersPercentage = new Label(
-                "Correct Answers: " + String.valueOf(currentGame.getcorrectAnswersPercentage()) + "%");
-        GridPane.setConstraints(correctAnswersPercentage, 0, 2);
-
-        ////////////////////////////////////////// MID LEFT PART
-        ////////////////////////////////////////// ////////////////////////////////////////////////
-        // image
+       // show image 
         ImageView imageView = new ImageView(DRAWINGS_FILE_NAME + "/" + String.valueOf(this.imageNumber) + ".png");
         GridPane.setConstraints(imageView, 0, 3);
         // gaps
 
-        this.hiddenWordVisual = new char[2 * currentGame.hiddenWord.length];
+        VisualizeHiddenWord();
 
-        for (int i = 0; i < currentGame.hiddenWord.length; i++) {
-            if (currentGame.knownPossitions[i])
-                this.hiddenWordVisual[2 * i] = currentGame.hiddenWord[i];
-            else
-                this.hiddenWordVisual[2 * i] = '_';
-            this.hiddenWordVisual[2 * i + 1] = ' ';
-        }
 
-        Label gapsLabel = new Label(String.valueOf(this.hiddenWordVisual));
-        gapsLabel.setId("Gaps");
-        gapsLabel.setMinWidth(95 * currentGame.hiddenWord.length);
-        GridPane.setConstraints(gapsLabel, 0, 4);
+        UpdateProbabilities();
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        // 4b
-
-        TableView<Probabilities> table = new TableView<Probabilities>();
-
-        TableColumn<Probabilities, Double> A = new TableColumn<Probabilities, Double>("A");
-        A.setSortable(false);
-        TableColumn<Probabilities, Double> B = new TableColumn<Probabilities, Double>("B");
-        B.setSortable(false);
-        TableColumn<Probabilities, Double> C = new TableColumn<Probabilities, Double>("C");
-        C.setSortable(false);
-        TableColumn<Probabilities, Double> D = new TableColumn<Probabilities, Double>("D");
-        D.setSortable(false);
-        TableColumn<Probabilities, Double> E = new TableColumn<Probabilities, Double>("E");
-        E.setSortable(false);
-        TableColumn<Probabilities, Double> F = new TableColumn<Probabilities, Double>("F");
-        F.setSortable(false);
-        TableColumn<Probabilities, Double> G = new TableColumn<Probabilities, Double>("G");
-        G.setSortable(false);
-        TableColumn<Probabilities, Double> H = new TableColumn<Probabilities, Double>("H");
-        H.setSortable(false);
-        TableColumn<Probabilities, Double> I = new TableColumn<Probabilities, Double>("I");
-        I.setSortable(false);
-        TableColumn<Probabilities, Double> J = new TableColumn<Probabilities, Double>("J");
-        J.setSortable(false);
-        TableColumn<Probabilities, Double> K = new TableColumn<Probabilities, Double>("K");
-        K.setSortable(false);
-        TableColumn<Probabilities, Double> L = new TableColumn<Probabilities, Double>("L");
-        L.setSortable(false);
-        TableColumn<Probabilities, Double> M = new TableColumn<Probabilities, Double>("M");
-        M.setSortable(false);
-        TableColumn<Probabilities, Double> N = new TableColumn<Probabilities, Double>("N");
-        N.setSortable(false);
-        TableColumn<Probabilities, Double> O = new TableColumn<Probabilities, Double>("O");
-        O.setSortable(false);
-        TableColumn<Probabilities, Double> P = new TableColumn<Probabilities, Double>("P");
-        P.setSortable(false);
-        TableColumn<Probabilities, Double> Q = new TableColumn<Probabilities, Double>("Q");
-        Q.setSortable(false);
-        TableColumn<Probabilities, Double> R = new TableColumn<Probabilities, Double>("R");
-        R.setSortable(false);
-        TableColumn<Probabilities, Double> S = new TableColumn<Probabilities, Double>("S");
-        S.setSortable(false);
-        TableColumn<Probabilities, Double> T = new TableColumn<Probabilities, Double>("T");
-        T.setSortable(false);
-        TableColumn<Probabilities, Double> U = new TableColumn<Probabilities, Double>("U");
-        U.setSortable(false);
-        TableColumn<Probabilities, Double> V = new TableColumn<Probabilities, Double>("V");
-        V.setSortable(false);
-        TableColumn<Probabilities, Double> W = new TableColumn<Probabilities, Double>("W");
-        W.setSortable(false);
-        TableColumn<Probabilities, Double> X = new TableColumn<Probabilities, Double>("X");
-        X.setSortable(false);
-        TableColumn<Probabilities, Double> Y = new TableColumn<Probabilities, Double>("Y");
-        Y.setSortable(false);
-        TableColumn<Probabilities, Double> Z = new TableColumn<Probabilities, Double>("Z");
-        Z.setSortable(false);
-
-        table.getColumns().addAll(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y);
-
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        A.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("A"));
-        B.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("B"));
-        C.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("C"));
-        D.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("D"));
-        E.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("E"));
-        F.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("F"));
-        G.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("G"));
-        H.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("H"));
-        I.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("I"));
-        J.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("J"));
-        K.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("K"));
-        L.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("L"));
-        M.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("M"));
-        N.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("N"));
-        O.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("O"));
-        P.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("P"));
-        Q.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("Q"));
-        R.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("R"));
-        S.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("S"));
-        T.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("T"));
-        U.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("U"));
-        V.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("V"));
-        W.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("W"));
-        X.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("X"));
-        Y.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("Y"));
-        Z.setCellValueFactory(
-                new PropertyValueFactory<Probabilities, Double>("Z"));
-
-        for (double[] prob : currentGame.probabilities) {
-            table.getItems().add(new Probabilities(prob));
-        }
-
-        GridPane.setConstraints(table, 1, 3);
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
-        Label PositionSelectorLabel = new Label("PositionSelector");
         ChoiceBox<Integer> PositionSelector = new ChoiceBox<Integer>();
         for (int i = 0; i < currentGame.hiddenWord.length; i++) {
             if (!currentGame.knownPossitions[i])
@@ -244,7 +118,6 @@ public class GameWindow extends Application {
         GridPane.setConstraints(PositionSelectorLabel, 0, 5);
         GridPane.setConstraints(PositionSelector, 0, 6);
 
-        Label LetterSelectorLabel = new Label("LetterSelector");
         ChoiceBox<Character> LetterSelector = new ChoiceBox<Character>();
         for (char letter : ALPHABET) {
             LetterSelector.getItems().add(letter);
@@ -255,13 +128,12 @@ public class GameWindow extends Application {
         GridPane.setConstraints(LetterSelector, 1, 6);
         ////////////////////////////////////////////
 
-        Button button = new Button("Click Me");
-        button.setOnAction(e -> Select(LetterSelector,PositionSelector));
+        SelectionButton.setOnAction(e -> Select(LetterSelector, PositionSelector));
 
-        GridPane.setConstraints(button, 0, 7);
+        GridPane.setConstraints(SelectionButton, 0, 7);
 
         grid.getChildren().addAll(possibleWordsLength, pointsLabel, correctAnswersPercentage, gapsLabel, imageView,
-                table, PositionSelector, PositionSelectorLabel, LetterSelector, LetterSelectorLabel, button);
+                table, PositionSelector, PositionSelectorLabel, LetterSelector, LetterSelectorLabel, SelectionButton);
 
         Scene scene = new Scene(grid, STAGE_WIDTH, STAGE_HEIGHT);
 
@@ -271,13 +143,64 @@ public class GameWindow extends Application {
 
     }
 
-}
+    private void Select(ChoiceBox<Character> LetterSelector, ChoiceBox<Integer> PositionSelector) {
+        Character letter = LetterSelector.getValue();
+        Integer position = PositionSelector.getValue();
+        if (!currentGame.ChooseLetter(letter, position)) {
+            this.imageNumber += 1;
+        }
+        try {
+            frame();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
-//    A    B    C    D    E    F    G    H    I    J     K    L   M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z
-// [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 
-//  [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
+    }
+
+
+    private void UpdateStatistics(){
+        //possibleWords
+        possibleWordsLength.setText("Possible Words: " + String.valueOf(currentGame.possibleWords.size()));
+        GridPane.setConstraints(possibleWordsLength, 0, 0);
+        // show points
+        pointsLabel.setText("Points: " + String.valueOf(currentGame.points));
+        GridPane.setConstraints(pointsLabel, 0, 1);
+        // show % of correct answrs
+        correctAnswersPercentage
+                .setText("Correct Answers: " + String.valueOf(currentGame.getcorrectAnswersPercentage()) + "%");
+        GridPane.setConstraints(correctAnswersPercentage, 0, 2);
+    }
+
+    private void UpdateProbabilities(){
+        for (int i = 0; i < ALPHABET.length; i++) {
+            TableColumn<Probabilities, Double> column = new TableColumn<Probabilities, Double>(
+                    Character.toString(Array.getChar(ALPHABET, i)));
+            column.setSortable(false);
+            column.setCellValueFactory(
+                    new PropertyValueFactory<Probabilities, Double>(Character.toString(Array.getChar(ALPHABET, i))));
+            table.getColumns().add(column);
+        }
+
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        for (double[] prob : currentGame.probabilities) {
+            table.getItems().add(new Probabilities(prob));
+        }
+
+        GridPane.setConstraints(table, 1, 3);
+    }
+    private void VisualizeHiddenWord(){
+        for (int i = 0; i < currentGame.hiddenWord.length; i++) {
+            if (currentGame.knownPossitions[i])
+                this.hiddenWordVisual[2 * i] = currentGame.hiddenWord[i];
+            else
+                this.hiddenWordVisual[2 * i] = '_';
+            this.hiddenWordVisual[2 * i + 1] = ' ';
+        }
+        gapsLabel.setText(String.valueOf(this.hiddenWordVisual));
+        gapsLabel.setId("Gaps");
+        gapsLabel.setMinWidth(95 * currentGame.hiddenWord.length);
+        GridPane.setConstraints(gapsLabel, 0, 4);
+
+    }
+}
